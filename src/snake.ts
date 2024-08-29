@@ -7,13 +7,10 @@ export class Snake {
 
     readonly #canvas_width:number
 
+    readonly #canvas_height:number
+
     /** vị trí ban đầu của rắn */
-    readonly #ORIGIN_SNAKE = {
-        /** vị trí ban đầu của rắn trên trục x | trục hoành */
-        x: 160,
-        /** vị trí ban đầu của rắn trên trục y | trục tung */
-        y: 160
-    }
+    readonly #ORIGIN_SNAKE:SnakeCell
 
     /** vị trí của rắn theo trục x */ 
     #x: number;
@@ -40,8 +37,11 @@ export class Snake {
     constructor(gameConfig: GameConfig) {
         this.#GRID = gameConfig.GRID
         this.#canvas_width = gameConfig.canvas_width
-
-        
+        this.#canvas_height = gameConfig.canvas_height
+        this.#ORIGIN_SNAKE= {
+            x: 160,
+            y: 160
+        }
         this.#x = this.#ORIGIN_SNAKE.x
         this.#y = this.#ORIGIN_SNAKE.y
         this.#length = 4
@@ -56,18 +56,47 @@ export class Snake {
         return Snake.#instance;
     }
 
+    public set dx(dx: number) {
+        this.#dx = dx
+    }
+
+    public set dy(dy: number) {
+        this.#dy = dy
+    }
+
+    public get cells(): SnakeCell[] {
+        return this.#cells
+    }
+
     /** rắn di chuyển */
     public move(): void {
         this.#x += this.#dx
         this.#y += this.#dy
 
         // kiểm tra chạm với tường
-        // Kiểm tra va chạm với tường
+        // Kiểm tra va chạm với tường trái và phải
         if (this.#x < 0) {
             this.#x = this.#canvas_width - this.#GRID;
         } else if (this.#x >= this.#canvas_width) {
             this.#x = 0;
         }
+
+        // Kiểm tra va chạm với các bức tường trên và dưới
+        if (this.#y < 0) {
+            this.#y = this.#canvas_height - this.#GRID; 
+        } else if (this.#y >= this.#canvas_height) {
+            this.#y = 0;
+        }
+
+        // Phương thức unshift sẽ thêm một hoặc nhiều phần tử vào đầu mảng
+        this.#cells.unshift({x: this.#x, y: this.#y});
+
+
+        // thêm 1 ô vuông phía trc thì phải remove 1 cái phía sau để snake move dc.
+        if (this.#length > this.#cells.length) {
+            this.#cells.pop();
+        }
+
     }
 
     /** rắn di chuyển lên */
@@ -94,5 +123,23 @@ export class Snake {
         this.#dy = 0
     }
 
+    /** có phải đang di chuyển theo chiều ngang không */
+    public isXMoving(): boolean {
+        return this.#dx !== 0
+    }
 
+    /** có phải đang di chuyển theo chiều dọc không */
+    public isYMoving(): boolean {
+        return this.#dy !== 0
+    }
+
+    // ăn táo
+    public eatApple(apple: Position): boolean {
+        // If the snake head is at the same position as the apple
+        if (this.#x === apple.x && this.#y === apple.y) {
+          this.#length++; // Increase the snake's maximum length
+          return true; // Indicate that the apple was eaten
+        }
+        return false; // Indicate that the apple was not eaten
+      }
 }

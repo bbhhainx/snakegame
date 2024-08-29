@@ -1,1 +1,5 @@
-console.log(123)
+import { Game } from "./game";
+
+let game = new Game();
+
+game.runGame();

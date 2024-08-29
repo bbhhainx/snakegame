@@ -1,6 +1,9 @@
 import { GameConfig } from "./gameConfig";
 
 export class Apple{
+
+    static #instance: Apple
+
     readonly #GRID:number
 
     /** vị trí ban đầu của apple */
@@ -20,6 +23,21 @@ export class Apple{
         this.#GRID = gameConfig.GRID
         this.#x = this.#ORIGIN_APPLE.x
         this.#y = this.#ORIGIN_APPLE.y
+    }
+
+    static getInstance(gameConfig: GameConfig): Apple {
+        if (!Apple.#instance) {
+            Apple.#instance = new Apple(gameConfig);
+        }
+        return Apple.#instance;
+    }
+
+    public get x(): number {
+        return this.#x
+    }
+
+    public get y(): number {
+        return this.#y
     }
 
     /** hàm tạo số nguyên ngẫu nhiên trong 1 khoảng */
