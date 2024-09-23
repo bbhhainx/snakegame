@@ -1,12 +1,17 @@
 import { GameConfig } from './gameConfig'
 
+/** đối tượng rắn trong trờ chơi */
 export class Snake {
+  /** đối tương singleton */
   static #instance: Snake
 
+  /** kích thước của 1 pixel */
   readonly #GRID: number
 
+  /** độ rộng của khung trò chơi */
   readonly #canvas_width: number
 
+  /** độ cao của khung trò chơi */
   readonly #canvas_height: number
 
   /** vị trí ban đầu của rắn */
@@ -47,21 +52,15 @@ export class Snake {
     this.#length = 4
     this.#dx = gameConfig.GRID
     this.#dy = 0
+    this.#cells = [{ x: this.#ORIGIN_SNAKE.x, y: this.#ORIGIN_SNAKE.y }]
   }
 
+  /** tạo đối tương singleton */
   static getInstance(gameConfig: GameConfig): Snake {
     if (!Snake.#instance) {
       Snake.#instance = new Snake(gameConfig)
     }
     return Snake.#instance
-  }
-
-  public set dx(dx: number) {
-    this.#dx = dx
-  }
-
-  public set dy(dy: number) {
-    this.#dy = dy
   }
 
   public get dx() {
@@ -82,17 +81,23 @@ export class Snake {
     this.#y += this.#dy
 
     // kiểm tra chạm với tường
-    // Kiểm tra va chạm với tường trái và phải
+    // Kiểm tra va chạm với tường trái
     if (this.#x < 0) {
       this.#x = this.#canvas_width - this.#GRID
-    } else if (this.#x >= this.#canvas_width) {
+    } 
+
+    // Kiểm tra va chạm với tường phải
+    if (this.#x >= this.#canvas_width) {
       this.#x = 0
     }
 
-    // Kiểm tra va chạm với các bức tường trên và dưới
+    // Kiểm tra va chạm với các bức tường trên
     if (this.#y < 0) {
       this.#y = this.#canvas_height - this.#GRID
-    } else if (this.#y >= this.#canvas_height) {
+    }
+    
+    // Kiểm tra va chạm với các bức tường dưới
+    if (this.#y >= this.#canvas_height) {
       this.#y = 0
     }
 
@@ -103,24 +108,6 @@ export class Snake {
     if (this.#cells.length > this.#length) {
       this.#cells.pop()
     }
-
-    this.#cells.forEach((cell, index) => {
-      if (index === 0) return
-
-      if (cell.x === this.#cells[0].x && cell.y === this.#cells[0].y) {
-        this.#x = 160
-
-        this.#y = 160
-
-        this.#cells = []
-
-        this.#length = 4
-
-        this.#dx = 160
-
-        this.#dy = 0
-      }
-    })
   }
 
   /** rắn di chuyển lên */
@@ -157,7 +144,7 @@ export class Snake {
     return this.#dy !== 0
   }
 
-  // ăn táo
+  /** rắn ăn táo */ 
   public eatApple(apple: Position): boolean {
     // If the snake head is at the same position as the apple
     if (this.#x === apple.x && this.#y === apple.y) {
@@ -165,5 +152,26 @@ export class Snake {
       return true // Indicate that the apple was eaten
     }
     return false // Indicate that the apple was not eaten
+  }
+
+  /** kiểm tra đầu chạm vào thân thì reset */ 
+  public hitSelf(): void {
+    this.#cells?.forEach((cell, index) => {
+      if (index === 0) return
+
+      if (cell.x === this.#cells[0].x && cell.y === this.#cells[0].y) {
+        this.#x = this.#ORIGIN_SNAKE.x
+
+        this.#y = this.#ORIGIN_SNAKE.y
+
+        this.#cells = [{ x: this.#ORIGIN_SNAKE.x, y: this.#ORIGIN_SNAKE.x }]
+
+        this.#length = 4
+
+        this.#dx = 16
+
+        this.#dy = 0
+      }
+    })
   }
 }

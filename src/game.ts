@@ -41,6 +41,8 @@ export class Game extends GameConfig {
 
 		this.#snake.move();
 
+    this.#snake.hitSelf();
+
 		if (this.#snake.eatApple(this.#apple)) {
       this.#apple.randomPosition();
     }
@@ -53,35 +55,27 @@ export class Game extends GameConfig {
   #handleKeyDown(e: KeyboardEvent): void {    
     switch (e.key) {
       case 'ArrowLeft': // Phím mũi tên trái
+        // Đảm bảo rắn không đang di chuyển theo chiều ngang
         if (!this.#snake.isXMoving()) {
           this.#snake.moveLeft()
-          // Đảm bảo rắn không đang di chuyển theo chiều ngang
-          // this.#snake.dx = -this.GRID // Đặt rắn di chuyển sang trái (dx âm)
-          // this.#snake.dy = 0 // Đặt hướng di chuyển theo chiều dọc của rắn về 0 (dừng di chuyển theo chiều dọc)
         }
         break
       case 'ArrowUp': // Phím mũi tên lên
+        // Đảm bảo rắn không đang di chuyển theo chiều dọc
         if (this.#snake.dy === 0) {
           this.#snake.moveUp()
-          // Đảm bảo rắn không đang di chuyển theo chiều dọc
-          // this.#snake.dy = -this.GRID // Đặt rắn di chuyển lên trên (dy âm)
-          // this.#snake.dx = 0 // Đặt hướng di chuyển theo chiều ngang của rắn về 0 (dừng di chuyển theo chiều ngang)
         }
         break
       case 'ArrowRight': // Phím mũi tên phải
+        // Đảm bảo rắn không đang di chuyển theo chiều ngang
         if (this.#snake.dx === 0) {
           this.#snake.moveRight()
-          // Đảm bảo rắn không đang di chuyển theo chiều ngang
-          // this.#snake.dx = this.GRID // Đặt rắn di chuyển sang phải (dx dương)
-          // this.#snake.dy = 0 // Đặt hướng di chuyển theo chiều dọc của rắn về 0 (dừng di chuyển theo chiều dọc)
         }
         break
       case 'ArrowDown': // Phím mũi tên xuống
+        // Đảm bảo rắn không đang di chuyển theo chiều dọc
         if (this.#snake.dy === 0) {
           this.#snake.moveDown()
-          // Đảm bảo rắn không đang di chuyển theo chiều dọc
-          // this.#snake.dy = this.GRID // Đặt rắn di chuyển xuống dưới (dy dương)
-          // this.#snake.dx = 0 // Đặt hướng di chuyển theo chiều ngang của rắn về 0 (dừng di chuyển theo chiều ngang)
         }
         break
     }
